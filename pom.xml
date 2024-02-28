@@ -32,9 +32,9 @@
         </dependency>
         <!-- Tyrus container for Grizzly -->
         <dependency>
-            <groupId>org.glassfish.tyrus</groupId>
-            <artifactId>tyrus-container-grizzly</artifactId>
-            <version>1.17</version> <!-- Check for the latest version -->
+                <groupId>org.glassfish.tyrus</groupId>
+                <artifactId>tyrus-container-grizzly-server</artifactId>
+                <version>1.13</version>
         </dependency>
 
         <!-- Grizzly Framework -->

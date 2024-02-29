@@ -1,21 +1,15 @@
 package com.wieik;
 
-import org.glassfish.tyrus.server.Server;
+import org.java_websocket.server.WebSocketServer;
 
-import javax.websocket.DeploymentException;
+import java.net.InetSocketAddress;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        Server server = new Server("localhost", 8080, "/", null, Socket.class);
+        String host = "localhost";
+        int port = 8080;
 
-        try {
-            server.start();
-            System.out.println("WebSocket server started.");
-            Thread.sleep(Long.MAX_VALUE);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            server.stop();
-        }
+        WebSocketServer server = new SimpleServer(new InetSocketAddress(host, port));
+        server.run();
     }
 }

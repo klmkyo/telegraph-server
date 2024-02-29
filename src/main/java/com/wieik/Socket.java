@@ -9,26 +9,24 @@ public class Socket {
 
     @OnOpen
     public void onOpen(Session session) {
-        System.out.println("New connection opened: " + session.getId());
+        System.out.println(String.format("WebSocket opened: %s", session.getId()));
     }
 
     @OnMessage
-    public void onMessage(String message, Session session) {
-        System.out.println("New message from " + session.getId() + ": " + message);
-        try {
-            session.getBasicRemote().sendText("Echo: " + message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void onMessage(String txt, Session session) throws IOException {
+        System.out.println(String.format("Message received: %s", txt));
+        session.getBasicRemote().sendText(txt.toUpperCase());
     }
 
     @OnClose
-    public void onClose(Session session) {
-        System.out.println("Connection closed: " + session.getId());
+    public void onClose(CloseReason reason, Session session) {
+        System.out.println(String.format("Closing a WebSocket (%s) due to %s", session.getId(), reason.getReasonPhrase()));
     }
 
     @OnError
-    public void onError(Throwable throwable, Session session) {
-        System.out.println("Error on connection " + session.getId() + ": " + throwable.getMessage());
+    public void onError(Session session, Throwable t) {
+        System.err.println(String.format("Error in WebSocket session %s%n", session == null ? "null" : session.getId()));
+        t.printStackTrace(System.err);
     }
+
 }

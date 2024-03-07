@@ -11,7 +11,21 @@ public class SimpleServer extends WebSocketServer {
 
     public SimpleServer(InetSocketAddress address) {
         super(address);
+        addShutdownHook();
     }
+
+    private void addShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("Shutting down server and disconnecting all clients...");
+
+            // Inform all clients about the shutdown and disconnect them
+            this.getConnections().forEach(connection -> {
+                connection.send("Server is shutting down. Disconnecting...");
+                connection.close(); // This will disconnect the client
+            });
+        }));
+    }
+
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
@@ -27,7 +41,15 @@ public class SimpleServer extends WebSocketServer {
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-        System.out.println("received message from "	+ conn.getRemoteSocketAddress() + ": " + message);
+        // Convert the received message to uppercase
+        String response = message.toUpperCase();
+
+        // Send the uppercase message back to the client
+        conn.send(response);
+
+        // Log the received message and the sent response for debugging purposes
+        System.out.println("received message from " + conn.getRemoteSocketAddress() + ": " + message);
+        System.out.println("sent response to " + conn.getRemoteSocketAddress() + ": " + response);
     }
 
     @Override
@@ -37,7 +59,11 @@ public class SimpleServer extends WebSocketServer {
 
     @Override
     public void onError(WebSocket conn, Exception ex) {
-        System.err.println("an error occurred on connection " + conn.getRemoteSocketAddress()  + ":" + ex);
+        if(conn == null) {
+            System.err.println("an error occurred on connection " + ex);
+        } else {
+            System.err.println("an error occurred on connection " + conn.getRemoteSocketAddress()  + ":" + ex);
+        }
     }
 
     @Override
